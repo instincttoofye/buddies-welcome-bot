@@ -34,7 +34,7 @@ client.on("guildMemberAdd", async (member) => {
         );
 
         const welcomeChannel = member.guild.channels.cache.find(
-            (channel) => channel.name === "new-buddies-welcoming"
+            (channel) => channel.name === "🩵new-buddies-welcoming"
         );
 
         const friendCodesChannel = member.guild.channels.cache.find(
@@ -43,7 +43,7 @@ client.on("guildMemberAdd", async (member) => {
 
         if (!welcomeChannel) {
             console.error(
-                'Could not find channel "#new-buddies-welcoming".'
+                'Could not find channel "#🩵new-buddies-welcoming".'
             );
             return;
         }
