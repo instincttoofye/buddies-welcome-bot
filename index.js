@@ -18,7 +18,7 @@ client.once("ready", () => {
 
 client.on("guildMemberAdd", async (member) => {
     try {
-        const memberRole = member.guild.roles.cache.find(
+        /*const memberRole = member.guild.roles.cache.find(
             (role) => role.name.toLowerCase() === "member"
         );
 
@@ -31,14 +31,14 @@ client.on("guildMemberAdd", async (member) => {
 
         console.log(
             `Assigned "${memberRole.name}" role to ${member.user.tag}`
-        );
+        );*/
 
         const welcomeChannel = member.guild.channels.cache.find(
             (channel) => channel.name === "🩵new-buddies-welcoming"
         );
 
         const friendCodesChannel = member.guild.channels.cache.find(
-            (channel) => channel.name === "friend-codes"
+            (channel) => channel.name === "🫂friend-codes"
         );
 
         if (!welcomeChannel) {
@@ -50,7 +50,7 @@ client.on("guildMemberAdd", async (member) => {
 
         if (!friendCodesChannel) {
             console.error(
-                'Could not find channel "#friend-codes".'
+                'Could not find channel "🫂#friend-codes".'
             );
             return;
         }
