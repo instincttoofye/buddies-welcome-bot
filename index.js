@@ -18,7 +18,7 @@ client.once("ready", () => {
 
 client.on("guildMemberAdd", async (member) => {
     try {
-        const memberRole = member.guild.roles.cache.find(
+      /*  const memberRole = member.guild.roles.cache.find(
             (role) => role.name.toLowerCase() === "buddy"
         );
 
@@ -31,7 +31,7 @@ client.on("guildMemberAdd", async (member) => {
 
         console.log(
             `Assigned "${memberRole.name}" role to ${member.user.tag}`
-        );
+        );*/
 
         const welcomeChannel = member.guild.channels.cache.find(
             (channel) => channel.name === "🩵new-buddies-welcoming"
