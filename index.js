@@ -18,12 +18,12 @@ client.once("ready", () => {
 
 client.on("guildMemberAdd", async (member) => {
     try {
-        /*const memberRole = member.guild.roles.cache.find(
-            (role) => role.name.toLowerCase() === "member"
+        const memberRole = member.guild.roles.cache.find(
+            (role) => role.name.toLowerCase() === "buddy"
         );
 
         if (!memberRole) {
-            console.error('Could not find a role named "member".');
+            console.error('Could not find a role named "buddy".');
             return;
         }
 
@@ -31,7 +31,7 @@ client.on("guildMemberAdd", async (member) => {
 
         console.log(
             `Assigned "${memberRole.name}" role to ${member.user.tag}`
-        );*/
+        );
 
         const welcomeChannel = member.guild.channels.cache.find(
             (channel) => channel.name === "🩵new-buddies-welcoming"
