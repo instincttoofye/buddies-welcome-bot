@@ -1,4 +1,6 @@
-require("dotenv").config();
+import "dotenv/config";
+
+import processCommand from "./commandProcessor.js";
 
 const {
     Client,
@@ -69,6 +71,11 @@ client.on("messageCreate", async (message) => {
 
     // Ignore DMs
     if(!message.guild) return;
+
+    if (message.content.startsWith("!")) {
+        let command = message.content.slice(0);
+        processCommand(message, command);
+    }
 
     const userId = message.author.id;
     const now = Date.now();
