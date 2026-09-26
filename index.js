@@ -73,7 +73,7 @@ client.on("messageCreate", async (message) => {
     if(!message.guild) return;
 
     if (message.content.startsWith("!")) {
-        let command = message.content.slice(0);
+        const command = message.content.slice(0);
         processCommand(message, command);
     }
 
