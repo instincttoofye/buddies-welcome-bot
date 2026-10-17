@@ -191,7 +191,9 @@ client.on("messageCreate", async (message) => {
                 TIMEOUT_DURATION,
                 "First strike: automatic anti-scam detection"
             );
-
+            
+            moderationCooldowns.set(moderationKey, Date.now());
+            
             console.log(
                 `First strike: timed out ${message.author.tag} for one hour.`
             );
