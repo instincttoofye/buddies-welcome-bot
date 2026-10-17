@@ -1,11 +1,13 @@
 import "dotenv/config";
 
-import processCommand from "./commandProcessor.js";
+//import processCommand from "./commandProccessor.js";
 
-const {
+import { registerStrike } from "./strikeManager.js";
+
+import {
     Client,
     GatewayIntentBits,
-} = require("discord.js");
+} from "discord.js";
 
 const client = new Client({
     intents: [
@@ -17,6 +19,7 @@ const client = new Client({
 });
 
 const recentMessages = new Map();
+const moderatingUsers = new Set();
 
 const SPAM_WINDOW = 15_000; // 15 seconds
 const CHANNEL_THRESHOLD = 3;
@@ -124,12 +127,20 @@ client.on("messageCreate", async (message) => {
         return;
     }
 
+    const moderationKey = `${message.guild.id}:${userId}`;
+
+    if (moderatingUsers.has(moderationKey)) {
+        return;
+    }
+
+    moderatingUsers.add(moderationKey);
+
     console.log(
         `SCAM/SPAM DETECTED GET THIS MF OUTTA HERE: ${message.author.tag}`
     );
 
     try {
-        // Delete all the suspicious messages we tracked
+        // Delete all suspicious messages
         for (const entry of suspiciousMessages) {
             try {
                 if (entry.message.deletable) {
@@ -143,27 +154,69 @@ client.on("messageCreate", async (message) => {
             }
         }
 
-        // Timeout the user
-        if (message.member?.moderatable) {
-            await message.member.timeout(
+        // Make sure the bot can enforce moderation
+        const member = message.member;
+
+        if (!member?.moderatable && !member?.kickable) {
+            console.error(
+                `Cannot moderate ${message.author.tag}: insufficient permissions.`
+            );
+            return;
+        }
+
+        const strikeCount = registerStrike(
+            message.guild.id,
+            userId
+        );
+
+        if (strikeCount === 1) {
+            // First strike: one-hour timeout
+            if (!member.moderatable) {
+                console.error(
+                    `Cannot timeout ${message.author.tag}.`
+                );
+                return;
+            }
+
+            await member.timeout(
                 TIMEOUT_DURATION,
-                "Automatic anti-scam detection: mass mention + attachments across multiple channels"
+                "First strike: automatic anti-scam detection"
             );
 
             console.log(
-                `Timed out ${message.author.tag} for suspected scam spam.`
+                `First strike: timed out ${message.author.tag} for one hour.`
+            );
+
+        } else {
+            // Second strike: kick
+            if (!member.kickable) {
+                console.error(
+                    `Cannot kick ${message.author.tag}.`
+                );
+                return;
+            }
+
+            await member.kick(
+                "Second strike: repeated scam/spam activity"
+            );
+
+            console.log(
+                `Second strike: kicked ${message.author.tag}.`
             );
         }
-
-        // Clear their tracked history
-        recentMessages.delete(userId);
 
     } catch (error) {
         console.error(
             `Failed to moderate ${message.author.tag}:`,
             error
         );
+
+    } finally {
+        // Always clear history and release the lock
+        recentMessages.delete(userId);
+        moderatingUsers.delete(moderationKey);
     }
-})
+});
+
 
 client.login(process.env.DISCORD_BOT_TOKEN);
