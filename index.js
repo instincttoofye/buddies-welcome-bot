@@ -129,10 +129,19 @@ client.on("messageCreate", async (message) => {
 
     const moderationKey = `${message.guild.id}:${userId}`;
 
+    const lastModeration = moderationCooldowns.get(moderationKey);
+    
+    if (
+        lastModeration !== undefined &&
+        Date.now() - lastModeration < MODERATION_COOLDOWN
+    ) {
+        return;
+    }
+    
     if (moderatingUsers.has(moderationKey)) {
         return;
     }
-
+    
     moderatingUsers.add(moderationKey);
 
     console.log(
